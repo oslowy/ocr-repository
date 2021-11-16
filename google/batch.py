@@ -1,3 +1,11 @@
+"""
+Legacy version of the load function that supports batch requests.
+
+########################################################################################
+### Younus: do not worry about re-implementing this, use the "load.py" file instead. ###
+########################################################################################
+"""
+
 import json
 import threading
 import os
@@ -5,7 +13,8 @@ from datetime import datetime
 
 from google.cloud import storage, pubsub
 
-from message import pack_message, topic_res_name
+from message import topic_res_name
+from google.message import pack_message
 
 
 def select_publish_topic(is_processing_on):

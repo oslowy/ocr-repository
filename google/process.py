@@ -1,10 +1,15 @@
+"""
+All the code in this file is designed to be platform-independent.
+It should be reusable with AWS or Google.
+
+    ### Younus: No need to change anything here.
+"""
 import json
 
-from google.cloud import pubsub
-import numpy as np
 import cv2
+import numpy as np
 
-from message import pack_message, topic_res_name
+from message import publish, pack_message
 
 
 # Data loading
@@ -67,20 +72,14 @@ def process_image(cv_image, approach):
     return morphed_image
 
 
-def publish(message):
-    pubsub.PublisherClient() \
-        .publish(topic=topic_res_name('ocr-detection-pickup'),
-                 data=message)
-
-
 def process_publish(image, filename, approach):
     # Process the image
     cv_image = cv_import(image)
     processed_cv_image = process_image(cv_image, approach)
     processed_image = cv_export(processed_cv_image)
 
-    # Re-package the image and arguments and publish to Pub/Sub
+    # Re-package the image and arguments and publish
     message = pack_message(processed_image, filename, approach)
-    publish(message)
+    publish('ocr-detection-pickup', message)
 
     return "Ran processing and published to next step."
