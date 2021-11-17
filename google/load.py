@@ -11,8 +11,7 @@ import json
 import os
 from datetime import datetime
 
-from google.message import pack_message
-from message import publish
+from message import pack_message, publish
 
 
 def select_publish_topic(is_processing_on):                                                     #
