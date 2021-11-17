@@ -27,7 +27,7 @@ def modify_filename(filename, date_time, is_processing_on):                     
 def load_and_publish(filename, is_processing_on, approach):                                     #
     # Record current date and time to stamp output files
     time_start = timer()
-    datetime_start = datetime.now()  # e.g. 2021-11-30_11-30-00
+    datetime_start = datetime.now().strftime(datetime_format)
 
     # Load image from bucket
     image = load_input(filename)
@@ -37,7 +37,7 @@ def load_and_publish(filename, is_processing_on, approach):                     
 
     # Record timing for this function
     time_end = timer()
-    timings = {'datetime_start': datetime_start.strftime(datetime_format),
+    timings = {'datetime_start': datetime_start,
                'load': time_end - time_start}
 
     # Pack image and arguments into a message data object
