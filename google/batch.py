@@ -13,8 +13,7 @@ from datetime import datetime
 
 from google.cloud import storage, pubsub
 
-from message import topic_res_name
-from google.message import pack_message
+from message import topic_res_name, pack_message
 
 
 def select_publish_topic(is_processing_on):
