@@ -15,6 +15,7 @@ from timeit import default_timer as timer
 from google.cloud import storage
 
 from message import pack_message, publish
+from datetime_format import datetime_format
 
 
 def select_publish_topic(is_processing_on):                                                     #
@@ -40,11 +41,13 @@ def handle_image(filename, batch_start_time, is_processing_on, approach):
     image = load_input(filename)
 
     # Modify filename by removing extension and adding time stamp and flags
-    filename = modify_filename(filename, batch_start_time, is_processing_on)
+    datetime_start = batch_start_time.strftime(datetime_format)
+    filename = modify_filename(filename, datetime_start, is_processing_on)
 
     # Record timing for this function
     time_end = timer()
-    timings = {'start': time_start, 'load': time_end - time_start}
+    timings = {'datetime_start': datetime_start,
+               'load': time_end - time_start}
 
     # Pack image and arguments into a message data object
     message_data = pack_message(image, filename, approach, timings)
@@ -55,7 +58,7 @@ def handle_image(filename, batch_start_time, is_processing_on, approach):
 
 def start_batch(filenames, is_processing_on, approach):
     # Record current date and time to stamp output files
-    batch_start_time = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')  # e.g. 2021-11-30_11-30-00
+    batch_start_time = datetime.now()
 
     # Create threads to process batch
     threads = [threading.Thread(target=handle_image,

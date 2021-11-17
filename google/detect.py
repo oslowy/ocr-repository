@@ -6,7 +6,10 @@ BUCKET = name of the bucket containing the images and outputs
 """
 import json
 import os
+from datetime import datetime
 from timeit import default_timer as timer
+
+from datetime_format import datetime_format
 
 
 #################################################################################################
@@ -25,7 +28,7 @@ def run_ocr(image, filename, approach, timings):                                
     time_end = timer()
 
     timings['detect'] = time_end - time_start
-    timings['total'] = time_end - timings['start']
+    timings['datetime_end'] = datetime.now().strftime(datetime_format)
     output_text = json.dumps({'annotations': annotations, 'timings': timings})
 
     # Store the output
