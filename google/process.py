@@ -24,7 +24,7 @@ def cv_export(processed_cv_image):
 
 
 def load_params(approach):
-    return json.loads(approach).values()
+    return approach.values()
 
 
 # Thresholding
