@@ -69,7 +69,9 @@ def extract_args_http(request):                                                 
 
     approach = data['approach'] if ('approach' in data) and data['is_processing_on'] else {}
 
-    return data['filenames'], data['is_processing_on'], approach
+    filename_arg = data['filenames'] if 'filenames' in data else data['filename']
+
+    return filename_arg, data['is_processing_on'], approach
 
 
 def topic_res_name(topic_id):                                                                   #
