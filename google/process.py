@@ -5,6 +5,7 @@ It should be reusable with AWS or Google.
     ### Younus: No need to change anything here.
 """
 import json
+from timeit import default_timer as timer
 
 import cv2
 import numpy as np
@@ -72,14 +73,20 @@ def process_image(cv_image, approach):
     return morphed_image
 
 
-def process_publish(image, filename, approach):
+def process_publish(image, filename, approach, timings):
+    time_start = timer()
+
     # Process the image
     cv_image = cv_import(image)
     processed_cv_image = process_image(cv_image, approach)
     processed_image = cv_export(processed_cv_image)
 
+    # Record timing
+    time_end = timer()
+    timings['process'] = time_end - time_start
+
     # Re-package the image and arguments and publish
-    message = pack_message(processed_image, filename, approach)
+    message = pack_message(processed_image, filename, approach, timings)
     publish('ocr-detection-pickup', message)
 
     return "Ran processing and published to next step."

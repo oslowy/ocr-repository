@@ -10,17 +10,16 @@ import json
 import threading
 import os
 from datetime import datetime
+from timeit import default_timer as timer
 
-from google.cloud import storage, pubsub
+from google.cloud import storage
 
-from message import topic_res_name, pack_message
+from message import pack_message, publish
 
 
-def select_publish_topic(is_processing_on):
-    topic_id = 'ocr-process-pickup' if is_processing_on \
+def select_publish_topic(is_processing_on):                                                     #
+    return 'ocr-process-pickup' if is_processing_on \
         else 'ocr-detection-pickup'
-
-    return topic_res_name(topic_id)
 
 
 def modify_filename(filename, date_time, is_processing_on):
@@ -37,16 +36,21 @@ def load_input(filename):
 
 def handle_image(filename, batch_start_time, is_processing_on, approach):
     # Load image from bucket
+    time_start = timer()
     image = load_input(filename)
 
     # Modify filename by removing extension and adding time stamp and flags
     filename = modify_filename(filename, batch_start_time, is_processing_on)
 
-    # Pack image and arguments into a message data object
-    message_data = pack_message(image, filename, json.dumps(approach))
+    # Record timing for this function
+    time_end = timer()
+    timings = {'start': time_start, 'load': time_end - time_start}
 
-    pubsub.PublisherClient().publish(topic=select_publish_topic(is_processing_on),
-                                     data=message_data)
+    # Pack image and arguments into a message data object
+    message_data = pack_message(image, filename, approach, timings)
+
+    publish(topic=select_publish_topic(is_processing_on),
+            message=message_data)
 
 
 def start_batch(filenames, is_processing_on, approach):

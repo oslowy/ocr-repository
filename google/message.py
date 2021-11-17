@@ -11,26 +11,27 @@ import json
 import os
 
 
-def pack_message(image, filename, approach):                                #
+def pack_message(image, filename, approach, timings):                       #
     # Convert the image to a string in base64 format
     content_str = base64.b64encode(image).decode('ascii')
 
-    return pack_text_message(content_str, filename, approach)
+    return pack_text_message(content_str, filename, approach, timings)
 
 
 def unpack_message(event):                                                  #
-    content_str, filename, approach = unpack_text_message(event)
+    content_str, filename, approach, timings = unpack_text_message(event)
 
     # Get the image from the coded string
     image = base64.b64decode(content_str.encode('ascii'))
 
-    return image, filename, approach
+    return image, filename, approach, timings
 
 
-def pack_text_message(text, filename, approach):                            #
+def pack_text_message(text, filename, approach, timings):                   #
     message = {'content': text,
                'filename': filename,
-               'approach': approach}
+               'approach': approach,
+               'timings': timings}
 
     # Convert the complete package into a binary object containing JSON
     return json.dumps(message).encode('utf-8')
@@ -38,10 +39,11 @@ def pack_text_message(text, filename, approach):                            #
 
 def unpack_text_message(event):                                             #
     # Unpack the binary JSON object
-    message_data = base64.b64decode(event["data"])
+    message_data = base64.b64decode(event["data"])  # Assumes the message was converted to base64 during queue send!
     message = json.loads(message_data.decode("utf-8"))
 
-    return message['content'], message['filename'], message['approach']
+    return message['content'], message['filename'], message['approach'], \
+           message['timings']
 
 # End: Platform-independent                                                 #
 #############################################################################

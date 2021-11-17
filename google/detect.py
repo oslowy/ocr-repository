@@ -4,25 +4,35 @@ Detects text and stores the result in the storage bucket.
 Note: please configure the following Runtime Environment Variables:
 BUCKET = name of the bucket containing the images and outputs
 """
+import json
 import os
-from functools import reduce
+from timeit import default_timer as timer
 
 
 #################################################################################################
 # Begin: Platform-independent. Reuse this code if possible.                                     #
 
-def run_ocr(image, filename, approach):                                                         #
+def run_ocr(image, filename, approach, timings):                                                #
+    time_start = timer()
+
     # Package the image in a request format for Google Vision
     request_image = {'content': image}
 
     # Detect the text
-    text = text_detection(request_image)
+    annotations = text_detection(request_image)
+
+    # Collect the output with timing information
+    time_end = timer()
+
+    timings['detect'] = time_end - time_start
+    timings['total'] = time_end - timings['start']
+    output_text = json.dumps({'annotations': annotations, 'timings': timings})
 
     # Store the output
-    print(filename)
-    store_output(text, filename)
+    store_output(output_text, filename)
 
-    return "Detected text and published to next step."
+    return "Detected text and stored output."
+
 
 # End: Platform-independent                                                                     #
 #################################################################################################
@@ -35,7 +45,7 @@ from google.cloud import vision, storage
 from google.cloud.vision_v1 import EntityAnnotation
 
 
-def format_response(text_detection_response):                                                   #
+def format_response(text_detection_response):                                                    #
     """
     Converts the response from Vision into JSON.
 
@@ -44,14 +54,11 @@ def format_response(text_detection_response):                                   
     """
 
     #########################################################################################
-    text_json_list = [EntityAnnotation.to_json(a)  # Reimplement this line                  #
-                      for a in text_detection_response.text_annotations]                    #
+    annotation_list = [json.loads(EntityAnnotation.to_json(a))  # Reimplement this line     #
+                       for a in text_detection_response.text_annotations]                   #
     #########################################################################################
 
-    if not text_json_list:
-        return '[]'
-
-    return '[\n' + reduce(lambda a, b: a + ',\n' + b, text_json_list) + '\n]'
+    return annotation_list
 
 
 def text_detection(image):                                                                      #
@@ -60,14 +67,14 @@ def text_detection(image):                                                      
     """
     #########################################################################################
     # Call Vision API                              # Reimplement this line                  #
-    text_detection_response = vision.ImageAnnotatorClient().text_detection(image=image)     #
+    text_detection_response = vision.ImageAnnotatorClient().text_detection(image=image)  #
     #########################################################################################
 
     # Export as JSON string
     return format_response(text_detection_response)
 
 
-def store_output(text, filename):
+def store_output(text, filename):                                                               #
     """
     Younus: Re-implement using S3
     """

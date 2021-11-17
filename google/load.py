@@ -7,9 +7,9 @@ BUCKET = name of the bucket containing the images
 
 #################################################################################################
 # Begin: Platform-independent. Reuse this code if possible.                                     #
-import json
 import os
 from datetime import datetime
+from timeit import default_timer as timer
 
 from message import pack_message, publish
 
@@ -23,8 +23,9 @@ def modify_filename(filename, date_time, is_processing_on):                     
     return f"{date_time}_{is_processing_on}_{filename[:-4]}"
 
 
-def load_and_publish(filename, is_processing_on, approach):                                     #
+def load_and_publish(filename, is_processing_on, approach, timings):                                     #
     # Record current date and time to stamp output files
+    time_start = timer()
     start_time = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')  # e.g. 2021-11-30_11-30-00
 
     # Load image from bucket
@@ -33,8 +34,12 @@ def load_and_publish(filename, is_processing_on, approach):                     
     # Modify filename by removing extension and adding time stamp and flags
     filename = modify_filename(filename, start_time, is_processing_on)
 
+    # Record timing for this function
+    time_end = timer()
+    timings = {'start': time_start, 'load': time_end - time_start}
+
     # Pack image and arguments into a message data object
-    message_data = pack_message(image, filename, json.dumps(approach))
+    message_data = pack_message(image, filename, approach, timings)
 
     # Publish to the queue
     publish(topic=select_publish_topic(is_processing_on),
