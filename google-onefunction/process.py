@@ -19,7 +19,7 @@ def cv_import(image):
 
 
 def cv_export(processed_cv_image):
-    return cv2.imencode('.png', processed_cv_image, [int(cv2.IMWRITE_PNG_BILEVEL), 1])[1]
+    return cv2.imencode('.png', processed_cv_image, [int(cv2.IMWRITE_PNG_BILEVEL), 1])[1].tobytes()
 
 
 def load_params(approach):
