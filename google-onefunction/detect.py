@@ -53,7 +53,7 @@ def format_response(text_detection_response):                                   
     Converts the response from Vision into JSON.
 
     Younus: Extract all the DetectedText objects from Rekognition response and return them
-            as a JSON list
+            as a list
     """
 
     #########################################################################################
