@@ -25,7 +25,7 @@ def modify_filename(filename, date_time, is_processing_on):                     
     return f"{date_time}_{is_processing_on}_{filename[:-4]}"
 
 
-def load(filename, is_processing_on, approach):                                     #
+def load(filename, is_processing_on, approach):                                                 #
     # Record current date and time to stamp output files
     time_start = timer()
     datetime_start = datetime.now().strftime(datetime_format)
