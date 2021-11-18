@@ -11,6 +11,11 @@ import process
 
 
 def load_entry(request):
+    """
+    The signature for this handler will have to be rewritten for AWS.
+    probably saying something like
+    def load_handler(event, context):
+    """
     return load.load(
         *msg.extract_args_http(request))
 
