@@ -73,7 +73,7 @@ def extract_args_http(request):                                                 
     Google platform-specific.
 
     Younus: re-implement using
-        data = json.loads(message.body)['data']
+        data = json.loads(request.body)['data']
 
         in place of
 
