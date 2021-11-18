@@ -34,7 +34,7 @@ def detect(image, filename, approach, timings):                                 
     # Store the output
     store_output(output_text, filename)
 
-    return "Detected text and stored output."
+    return f"Detected text and stored output in {filename}"
 
 
 # End: Platform-independent                                                                     #
