@@ -35,16 +35,6 @@ def pack_text_message(text, filename, approach, timings):                   #
 
     # Convert the complete package into a binary object containing JSON
     return json.dumps(message).encode('utf-8')
-
-
-def unpack_text_message(event):                                             #
-    # Unpack the binary JSON object
-    message_data = base64.b64decode(event["data"])  # Assumes the message was converted to base64 during queue send!
-    message = json.loads(message_data.decode("utf-8"))
-
-    return message['content'], message['filename'], message['approach'], \
-           message['timings']
-
 # End: Platform-independent                                                 #
 #############################################################################
 
@@ -52,6 +42,30 @@ def unpack_text_message(event):                                             #
 #################################################################################################
 # Begin: Google platform-specific. Younus: Re-implement using AWS client APIs.                  #
 from google.cloud import pubsub
+
+
+def unpack_text_message(event):
+    """
+    Partially Google platform-specific.
+
+    Younus: the base64 decoding is not needed in this part. Also, AWS uses a different attribute
+            structure for message events. If you set up your lambdas to trigger from an SQS,
+            you will NOT need to call receive() from boto3, just send() them from the preceding
+            lambda and set up this method here to unpack the data from the event structure.
+
+            I think the access structure you want is:
+            message_data = event['Records'][0]['body']
+
+            after that everything else should be fine.
+    """
+    # Unpack the binary JSON object
+    ####################################################################################################
+    message_data = base64.b64decode(event["data"])      # message_data = event['Records'][0]['body']   #
+    ####################################################################################################
+    message = json.loads(message_data.decode("utf-8"))
+
+    return message['content'], message['filename'], message['approach'], \
+           message['timings']
 
 
 def extract_args_http(request):                                                                 #
