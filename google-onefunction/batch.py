@@ -71,4 +71,5 @@ def start_batch(filenames, is_processing_on, approach):
         thread.join()
 
     # Complete
-    return f"All calls batched to image step. Outputs will be in {batch_start_time}_{is_processing_on}/"
+    return "All calls batched to image step. Outputs will be in " + \
+           f"{batch_start_time.strftime(datetime_format)}_{is_processing_on}/"
