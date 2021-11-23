@@ -1,0 +1,47 @@
+{
+	"info": {
+		"_postman_id": "cd597ba4-d59b-4789-b69d-45bbe5cbd27e",
+		"name": "OCR",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "SendFileNameAsMessage",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "00_00.jpg",
+					"options": {
+						"raw": {
+							"language": "text"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://exhtaawacg.execute-api.us-east-1.amazonaws.com/OCR/sqs",
+					"protocol": "https",
+					"host": [
+						"exhtaawacg",
+						"execute-api",
+						"us-east-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"OCR",
+						"sqs"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
