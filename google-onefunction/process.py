@@ -26,32 +26,6 @@ def load_params(approach):
     return approach.values()
 
 
-# Thresholding
-def rgb_thresholding(cv_image, gauss_kernel_size, thresh_window_size, thresh_C):
-    channels = cv2.split(cv_image)
-    channels = [cv2.GaussianBlur(channel, (gauss_kernel_size, gauss_kernel_size), 0)
-                for channel in channels]
-    channels = [cv2.adaptiveThreshold(channel, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV,
-                                      thresh_window_size, thresh_C)
-                for channel in channels]
-
-    return cv2.cvtColor(cv2.merge(channels), cv2.COLOR_RGB2GRAY)
-
-
-def gray_thresholding(cv_image, gauss_kernel_size, thresh_window_size, thresh_C):
-    grayed_img = cv2.cvtColor(cv_image, cv2.COLOR_RGB2GRAY)
-    blurred_img = cv2.GaussianBlur(grayed_img, (gauss_kernel_size, gauss_kernel_size), 0)
-    return cv2.adaptiveThreshold(blurred_img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-                                 cv2.THRESH_BINARY_INV, thresh_window_size, thresh_C)
-
-
-# Morphological operations
-def morphological(image, morph_kernel_size):
-    morphological_kernel = np.ones((morph_kernel_size, morph_kernel_size), np.uint8)
-    opened_image = cv2.morphologyEx(image, cv2.MORPH_OPEN, morphological_kernel)
-    return cv2.morphologyEx(opened_image, cv2.MORPH_CLOSE, morphological_kernel)
-
-
 # Processing script
 def processing_operations(cv_image, approach):
     # Load parameters for image processing
@@ -62,14 +36,24 @@ def processing_operations(cv_image, approach):
     rgb_threshold, \
     debug = load_params(approach)
 
-    # Thresholding
-    thresholded_image = (rgb_thresholding if rgb_threshold else gray_thresholding)\
-        (cv_image, gauss_kernel_size, thresh_window_size, thresh_C)
+    # Convert to HSV
+    hsv_image = cv2.cvtColor(cv_image, cv2.COLOR_BGR2HSV)
+    channels = cv2.split(hsv_image)
+
+    # Noise removal and threshold
+    for i in range(len(channels)):
+        channels[i] = cv2.GaussianBlur(channels[i], (gauss_kernel_size, gauss_kernel_size), 0)
+        channels[i] = cv2.adaptiveThreshold(channels[i], 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV,
+                                            thresh_window_size, thresh_C)
+    # Combine channels
+    thresholded_image = cv2.bitwise_or(channels[0], channels[1])
 
     # Morphological operations
-    morphed_image = morphological(thresholded_image, morph_kernel_size)
+    morphological_kernel = np.ones((morph_kernel_size, morph_kernel_size), np.uint8)
+    opened_image = cv2.morphologyEx(thresholded_image, cv2.MORPH_OPEN, morphological_kernel)
+    closed_image = cv2.morphologyEx(opened_image, cv2.MORPH_CLOSE, morphological_kernel)
 
-    return morphed_image
+    return closed_image
 
 
 def process(image, filename, approach, timings):
