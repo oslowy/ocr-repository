@@ -44,7 +44,7 @@ def processing_operations(cv_image, approach):
         channels = tuple(cv2.adaptiveThreshold(channel, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV,
                                                thresh_window_size, thresh_C) for channel in channels)
     # Combine channels
-    thresholded_image = cv2.bitwise_or(channels[0], channels[1])
+    thresholded_image = channels[2]
 
     # Morphological operations
     morphological_kernel = np.ones((morph_kernel_size, morph_kernel_size), np.uint8)
