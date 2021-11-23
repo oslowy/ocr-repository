@@ -32,9 +32,7 @@ def processing_operations(cv_image, approach):
     morph_kernel_size, \
     gauss_kernel_size, \
     thresh_window_size, \
-    thresh_C, \
-    rgb_threshold, \
-    debug = load_params(approach)
+    thresh_C = load_params(approach)
 
     # Convert to HSV
     hsv_image = cv2.cvtColor(cv_image, cv2.COLOR_BGR2HSV)
