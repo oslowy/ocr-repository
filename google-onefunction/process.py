@@ -40,9 +40,9 @@ def processing_operations(cv_image, approach):
 
     # Noise removal and threshold
     for i in range(len(channels)):
-        channels[i] = cv2.GaussianBlur(channels[i], (gauss_kernel_size, gauss_kernel_size), 0)
-        channels[i] = cv2.adaptiveThreshold(channels[i], 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV,
-                                            thresh_window_size, thresh_C)
+        channels = tuple(cv2.GaussianBlur(channel, (gauss_kernel_size, gauss_kernel_size), 0) for channel in channels)
+        channels = tuple(cv2.adaptiveThreshold(channel, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV,
+                                               thresh_window_size, thresh_C) for channel in channels)
     # Combine channels
     thresholded_image = cv2.bitwise_or(channels[0], channels[1])
 
