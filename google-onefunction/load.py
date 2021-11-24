@@ -16,7 +16,7 @@ from detect import detect
 from process import process
 
 
-def select_publish_topic(is_processing_on):                                                     #
+def select_next_phase(is_processing_on):                                                     #
     return process if is_processing_on \
         else detect
 
@@ -42,7 +42,7 @@ def load(filename, is_processing_on, approach):                                 
                'load': time_end - time_start}
 
     # Pass to the next step
-    return select_publish_topic(is_processing_on)(image, filename, approach, timings)
+    return select_next_phase(is_processing_on)(image, filename, approach, timings)
 
 # End: Platform-independent                                                                     #
 #################################################################################################
