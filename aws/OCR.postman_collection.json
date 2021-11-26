@@ -18,10 +18,10 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "00_00.jpg",
+					"raw": "{\r\n\t\"data\": {\r\n\t\t\"filename\": \"00_01.jpg\",\r\n\t\t\"is_processing_on\": true,\r\n\t\t\"approach\": {\r\n\t\t\t\"morph_kernel_size\": 3,\r\n\t\t\t\"gauss_kernel_size\": 5,\r\n\t\t\t\"thresh_window_size\": 31,\r\n\t\t\t\"thresh_C\": 2\r\n\t\t}\r\n\t}\r\n}",
 					"options": {
 						"raw": {
-							"language": "text"
+							"language": "json"
 						}
 					}
 				},

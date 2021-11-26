@@ -1,13 +1,9 @@
-"""
-All the code in this file is designed to be platform-independent.
-It should be reusable with AWS or Google.
-    ### Younus: No need to change anything here.
-"""
-
+from timeit import default_timer as timer
 import cv2
 import numpy as np
+from Formats import dateTimeFormat
+from datetime import datetime
 
-from detect import detect
 
 
 # Data loading
@@ -52,13 +48,35 @@ def processing_operations(cv_image, approach):
     return closed_image
 
 
-def process(image, filename, approach):
+def process(response, approach):
+    try:
+        timeStart = timer()
+        dateTimeStart = datetime.now().strftime(dateTimeFormat)
+    
+        print('Time for Preprocessing image started at ==> '+str(dateTimeStart))
+    
+        # Process the image
+        cv_image = cv_import(response['Image'])
+        processed_cv_image = processing_operations(cv_image, approach)
+        processedImage = cv_export(processed_cv_image)
+    
+        # Record timing
+        timeEnd = timer()
+        
+        ProcessTime = timeEnd - timeStart
+        print('Time for Preprocessing image completed at ==> '+str(ProcessTime))
+        
+        if processedImage is not None:
+            
+            response['StatusCode'] = 200
+            response['TimeElapsed']['ProcessTime'] = ProcessTime
+            response['Image'] = processedImage
 
-    # Process the image
-    cv_image = cv_import(image)
-    processed_cv_image = processing_operations(cv_image, approach)
-    processed_image = cv_export(processed_cv_image)
-
-    # Record timing
-
-    return detect(processed_image, filename, approach, timings)
+        else:
+            response['StatusCode'] = 400 
+    
+    except Exception as e:
+        response['StatusCode'] = 500
+        response['Error'] = str(e)
+      
+    return response

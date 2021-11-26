@@ -1,9 +1,9 @@
-"""
-The code in this file may or may not be needed for AWS. It was included
-to support Google's way of configuring Cloud Functions. If your Lambda
-functions support custom entry point filenames, you may not need this
-but it will not hurt anything either necessarily.
-"""
+# """
+# The code in this file may or may not be needed for AWS. It was included
+# to support Google's way of configuring Cloud Functions. If your Lambda
+# functions support custom entry point filenames, you may not need this
+# but it will not hurt anything either necessarily.
+# """
 import load
 import detect
 import message as msg
@@ -11,11 +11,12 @@ import process
 
 
 def load_entry(request):
-    """
-    The signature for this handler will have to be rewritten for AWS.
-    probably saying something like
-    def load_handler(event, context):
-    """
+   
+    # """
+    # The signature for this handler will have to be rewritten for AWS.
+    # probably saying something like
+    # def load_handler(event, context):
+    # """
     return load.load(
         *msg.extract_args_http(request))
 
